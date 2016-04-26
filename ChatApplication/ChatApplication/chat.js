@@ -1,10 +1,12 @@
 ﻿var userName = prompt("Enter your name: ");
 var chat = $.connection.chatHub;
+
 chat.client.messageReceived = function (originatorUser, message) {
     $("#messages").append('<li><strong>' + originatorUser + '</strong>: ' + message);
 };
 
 chat.client.getConnectedUsers = function (userList) {
+    $("#userList").empty();
     for (var i = 0; i < userList.length; i++)
         $("#userList").append('<li>' + userList[i] + '</li>');
 };
