@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChatApplication
@@ -8,10 +10,23 @@ namespace ChatApplication
     public class ChatHub : Hub
     {
         public static Dictionary<string, string> ConnectedUsers;
+        public static MessageContext MsgContext = new MessageContext();
 
         public void Send(string originatorUser, string message)
         {
-            Clients.All.messageReceived(originatorUser, message);
+
+            //var lastMessage = (Message) MsgContext.Messages.Take(1);
+            MsgContext.Messages.Add(new Message()
+            {
+                Username = originatorUser,
+                MessageId = 2,
+                MessageText = message,
+                Date = DateTime.Today.ToString("dd/MM/yyyy"),
+                Time = DateTime.Now.ToString("HH:mm:ss")
+            });
+            MsgContext.SaveChanges();
+
+            Clients.All.messageReceived(originatorUser, message, DateTime.Now.ToString("HH:mm:ss"));
         }
 
         public void Connect(string newUser)
@@ -27,6 +42,12 @@ namespace ChatApplication
 
             Clients.Caller.getConnectedUsers(temp);
             Clients.Others.newUserAdded(newUser);
+
+            // stergere baza de date
+            foreach (Message msg in MsgContext.Messages)
+            {
+                MsgContext.Messages.Remove(msg);
+            }
             
         }
 
