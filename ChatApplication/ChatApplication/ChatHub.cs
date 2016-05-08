@@ -14,34 +14,16 @@ namespace ChatApplication
 
         public void Send(string originatorUser, string message)
         {
-
-            if (MsgContext.Messages.Take(1).Count() == 0)
+            MsgContext.Messages.Add(new Message()
             {
-                MsgContext.Messages.Add(new Message()
-                {
-                    Username = originatorUser,
-                    MessageId = 0,
-                    MessageText = message,
-                    Date = DateTime.Today.ToString("dd/MM/yyyy"),
-                    Time = DateTime.Now.ToString("HH:mm:ss")
-                });
+                Username = originatorUser,
+                MessageText = message,
+                Date = DateTime.Today.ToString("dd/MM/yyyy"),
+                Time = DateTime.Now.ToString("HH:mm:ss")
+            });
 
-                MsgContext.SaveChanges();
-            }
-            else
-            {
-                var lastMessage = MsgContext.Messages.Take(1).First();
-                MsgContext.Messages.Add(new Message()
-                {
-                    Username = originatorUser,
-                    MessageId = lastMessage.MessageId + 1,
-                    MessageText = message,
-                    Date = DateTime.Today.ToString("dd/MM/yyyy"),
-                    Time = DateTime.Now.ToString("HH:mm:ss")
-                });
+            MsgContext.SaveChanges();
 
-                MsgContext.SaveChanges();
-            }
 
             Clients.All.messageReceived(originatorUser, message, DateTime.Now.ToString("HH:mm:ss"));
         }
@@ -64,25 +46,21 @@ namespace ChatApplication
             /*foreach (Message msg in MsgContext.Messages)
             {
                 MsgContext.Messages.Remove(msg);
-            }*/
+            }
+            MsgContext.SaveChanges();*/
 
-            List<Message> lastMessages = MsgContext.Messages.Take(50).ToList();
-            List<string> users = new List<string>();
-            List<string> messages = new List<string>();
-            List<string> dates = new List<string>();
-            List<string> times = new List<string>();
+            List<Message> lastMessages = MsgContext.Messages.OrderByDescending(m => m.MessageId).Take(50).ToList();
 
-            foreach (Message msg in lastMessages)
+            Clients.Caller.lastMessages(lastMessages);
+
+            lastMessages = MsgContext.Messages.Take(1000).ToList();
+            foreach (Message msg in MsgContext.Messages)
             {
-                users.Add(msg.Username);
-                messages.Add(msg.MessageText);
-                dates.Add(msg.Date);
-                times.Add(msg.Time);
+                System.Diagnostics.Debug.WriteLine(msg.MessageId);
             }
 
-            Clients.Caller.lastMessages(users, messages, dates, times);
-            
-            
+
+
         }
 
         public override Task OnDisconnected(bool stopCalled)

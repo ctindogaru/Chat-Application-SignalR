@@ -111,6 +111,7 @@
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Properties\PublishProfiles\Chat-Appv2 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\microsoft-innovation-center-chat.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -5,10 +5,10 @@ chat.client.messageReceived = function (originatorUser, message, time) {
     $("#messages").append('<li>' + time + ' ' + '<strong>' + originatorUser + '</strong>: ' + message);
 };
 
-chat.client.lastMessages = function (originatorUsers, messages, times, dates) {
+chat.client.lastMessages = function (messages) {
     $("#messages").empty();
-    for (var i = 0; i < messages.length; i++)
-        $("#messages").append('<li>' + dates[i] + ' ,' + times[i] + ' ' + '<strong>' + originatorUsers[i] + '</strong>: ' + messages[i]);
+    for (var i = messages.length-1; i >= 0; i--)
+        $("#messages").append('<li>' + messages[i].Date + ' ,' + messages[i].Time + ' ' + '<strong>' + messages[i].Username + '</strong>: ' + messages[i].MessageText);
 };
 
 chat.client.getConnectedUsers = function (userList) {
