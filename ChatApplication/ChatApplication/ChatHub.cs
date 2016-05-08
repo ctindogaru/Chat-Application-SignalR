@@ -49,17 +49,17 @@ namespace ChatApplication
             }
             MsgContext.SaveChanges();*/
 
-            List<Message> lastMessages = MsgContext.Messages.OrderByDescending(m => m.MessageId).Take(50).ToList();
+            List<Message> test = MsgContext.Messages.Take(50).ToList();
 
-            Clients.Caller.lastMessages(lastMessages);
-
-            lastMessages = MsgContext.Messages.Take(1000).ToList();
-            foreach (Message msg in MsgContext.Messages)
+            foreach (Message msg in test)
             {
-                System.Diagnostics.Debug.WriteLine(msg.MessageId);
+                System.Diagnostics.Debug.WriteLine(msg.MessageId + " " + msg.MessageText);
             }
 
 
+            List<Message> lastMessages = MsgContext.Messages.OrderByDescending(m => m.MessageId).Take(50).ToList();
+
+            Clients.Caller.lastMessages(lastMessages);
 
         }
 
