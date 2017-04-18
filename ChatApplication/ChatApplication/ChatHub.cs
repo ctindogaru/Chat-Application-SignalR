@@ -10,20 +10,19 @@ namespace ChatApplication
     public class ChatHub : Hub
     {
         public static Dictionary<string, string> ConnectedUsers;
-        public static MessageContext MsgContext = new MessageContext();
+        //public static MessageContext MsgContext = new MessageContext();
 
         public void Send(string originatorUser, string message)
         {
-            MsgContext.Messages.Add(new Message()
+            // add message to database
+            /*MsgContext.Messages.Add(new Message()
             {
                 Username = originatorUser,
                 MessageText = message,
                 Date = DateTime.Today.ToString("dd/MM/yyyy"),
                 Time = DateTime.Now.ToString("HH:mm:ss")
             });
-
-            MsgContext.SaveChanges();
-
+            MsgContext.SaveChanges();*/
 
             Clients.All.messageReceived(originatorUser, message, DateTime.Now.ToString("HH:mm:ss"));
         }
@@ -42,25 +41,16 @@ namespace ChatApplication
             Clients.Caller.getConnectedUsers(temp);
             Clients.Others.newUserAdded(newUser);
 
-            // stergere baza de date
+            // delete database
             /*foreach (Message msg in MsgContext.Messages)
             {
                 MsgContext.Messages.Remove(msg);
             }
             MsgContext.SaveChanges();*/
 
-            List<Message> test = MsgContext.Messages.Take(50).ToList();
-
-            foreach (Message msg in test)
-            {
-                System.Diagnostics.Debug.WriteLine(msg.MessageId + " " + msg.MessageText);
-            }
-
-
-            List<Message> lastMessages = MsgContext.Messages.OrderByDescending(m => m.MessageId).Take(50).ToList();
-
-            Clients.Caller.lastMessages(lastMessages);
-
+            // get last 50 messages from database
+            /*List<Message> lastMessages = MsgContext.Messages.OrderByDescending(m => m.MessageId).Take(50).ToList();
+            Clients.Caller.lastMessages(lastMessages); */
         }
 
         public override Task OnDisconnected(bool stopCalled)
